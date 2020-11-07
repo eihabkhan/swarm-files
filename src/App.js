@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css'
+
+import { CardList } from './components/card-list/CardList.component'
+import { SearchBox } from './components/search-box/SearchBox.component'
+
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      swarm: [],
+      searchTerm: ''
+    } 
+  }
+
+  componentDidMount() {
+    fetch('http://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+        .then(data => this.setState({swarm: data}))
+  }
+
+  handleChange = e => {
+    this.setState({searchTerm: e.target.value})
+  }
+  
+
+  render() {
+    const { swarm, searchTerm } = this.state
+    const filteredSwarm = swarm.filter(
+      locust => locust.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+    )
+
+    return (
+      <div className='App'>  
+        <h1> Swarm Files </h1>       
+        <SearchBox placeholder='Search swarm' handleChange={this.handleChange}/>
+        <CardList swarm={filteredSwarm}/>
+      </div>
+    )
+  }
+
+  
+
+
 }
 
 export default App;
